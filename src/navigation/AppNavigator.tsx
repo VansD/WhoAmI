@@ -13,6 +13,7 @@ import SelectGuesserScreen from '../screens/SelectGuesserScreen';
 import { ImageBackground, StyleSheet } from 'react-native';
 import SettingsScreen from '../screens/SettingsScreen';
 import { HeaderHome } from './HeaderHome';
+import RoundResultsScreen from '../screens/RoundResultsScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -39,6 +40,7 @@ const AppNavigator = () => {
           <Stack.Screen name="SelectGuesser" component={SelectGuesserScreen} options={{ title: 'Выбор участников' }} />
           <Stack.Screen name="Game" component={GameScreen} options={{ title: 'Игра' }} />
           <Stack.Screen name="FinalGame" component={FinalGameScreen} options={{ title: 'Результаты' }} />
+          <Stack.Screen name="RoundResults" component={RoundResultsScreen} options={{ title: 'Результаты раунда' }} />
         </Stack.Navigator>
       </NavigationContainer >
     </ImageBackground>

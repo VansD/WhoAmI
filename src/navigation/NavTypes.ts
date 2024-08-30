@@ -10,6 +10,7 @@ export type RootStackParamList = {
     Game: undefined;
     SelectGuesser: undefined;
     Settings: undefined;
+    RoundResults: undefined;
 
   };
 
@@ -21,4 +22,5 @@ export type RootStackParamList = {
  export type GameScreenProps = NativeStackScreenProps<RootStackParamList, 'Game'>;
  export type SelectGuesserScreenProps = NativeStackScreenProps<RootStackParamList, 'SelectGuesser'>;
  export type SettingsScreenProps = NativeStackScreenProps<RootStackParamList, 'Settings'>;
+ export type RoundResultsScreenProps = NativeStackScreenProps<RootStackParamList, 'RoundResults'>;
 

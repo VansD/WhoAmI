@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import { View, Text, Animated, StyleSheet, PanResponder, Alert } from 'react-native';
 import { observer } from 'mobx-react-lite';
@@ -9,9 +8,9 @@ import { GameScreenProps } from '../navigation/NavTypes';
 const GameScreen = observer(({ navigation }: GameScreenProps): React.JSX.Element => {
   const roundDuration = roundDurationsStore.getCurrentRoundDuration();
   const [timer, setTimer] = useState<number>(roundDuration);
+  const [isNextCharacter, setIsNextCharacter] = useState<boolean>(false);
   const [pan, setPan] = useState(new Animated.ValueXY());
   const [currentCharacter, setCurrentCharacter] = useState<string | null>(null);
-  const [showRoundEndAlert, setShowRoundEndAlert] = useState<boolean>(false);
   const currentPair = gameStore.currentPair;
 
   useEffect(() => {
@@ -44,8 +43,9 @@ const GameScreen = observer(({ navigation }: GameScreenProps): React.JSX.Element
   };
 
   const handleSwipeDown = () => {
-    // gameStore.moveCharacterToEnd();
-    // handleNextCharacter();
+    if (currentCharacter)
+      gameStore.removeCharacter(currentCharacter);
+    handleNextCharacter();
   };
 
   const handleNextCharacter = () => {
@@ -55,29 +55,20 @@ const GameScreen = observer(({ navigation }: GameScreenProps): React.JSX.Element
     } else {
       handleRoundEnd();
     }
+    setIsNextCharacter(!isNextCharacter);
   };
 
   const handleRoundEnd = () => {
     if (!gameStore.hasUnusedCharacters()) {
       if (roundDurationsStore.currentRound < roundDurationsStore.maxRounds) {
-        setShowRoundEndAlert(true);
-        Alert.alert(
-          `Раунд ${roundDurationsStore.currentRound} завершен`,
-          `Начинается следующий раунд. ${roundDurationsStore.currentRound < 2 ? 'Теперь объясняем только жестами' : 'Теперь объясняем только одним словом'}`,
-          [{ text: 'OK', onPress: handleStartNextRound }],
-        );
+        setTimer(0);
+        navigation.navigate('RoundResults');
       } else {
         navigation.navigate('FinalGame');
       }
     } else {
       navigation.navigate('SelectGuesser');
     }
-  };
-
-  const handleStartNextRound = () => {
-    setShowRoundEndAlert(false);
-    gameStore.endRound();
-    navigation.navigate('SelectGuesser');
   };
 
   const panResponder = PanResponder.create({
@@ -109,7 +100,7 @@ const GameScreen = observer(({ navigation }: GameScreenProps): React.JSX.Element
       <View style={styles.characterBlock}>
         {currentPair && currentCharacter && (
           <Animated.View
-            style={[styles.characterCard, pan.getLayout()]}
+            style={[styles.characterCard, pan.getLayout(), { backgroundColor: isNextCharacter ? "#bb00aa" : "#009688" }]}
             {...panResponder.panHandlers}
           >
             <Text style={styles.characterText}>{currentCharacter}</Text>
@@ -151,7 +142,6 @@ const styles = StyleSheet.create({
   characterCard: {
     width: '90%',
     padding: 20,
-    backgroundColor: '#009688',
     borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
