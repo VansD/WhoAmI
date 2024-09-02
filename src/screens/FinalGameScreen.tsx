@@ -3,7 +3,6 @@ import { View, Text, FlatList, StyleSheet } from 'react-native';
 import { gameStore } from '../stores/GameStore';
 import { FinalGameScreenProps } from '../navigation/NavTypes';
 import { Button } from '../components/Button';
-import { playersStore } from '../stores/PlayersStore';
 
 const FinalGameScreen: React.FC<FinalGameScreenProps> = ({ navigation }) => {
   const results = gameStore.getResults();

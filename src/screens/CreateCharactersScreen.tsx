@@ -8,14 +8,6 @@ import { Button } from '../components/Button';
 const CreateCharactersScreen = observer(({ navigation }: CreateCharactersScreenProps) => {
   const [name, setName] = useState<string>('');
 
-  
-  // useEffect(() => {
-  //   let activePlayersCount = gameStore.players.length;
-  //   let actualSavedCharactersCount = characters.length / activePlayersCount;
-  //   let savedCharacters = characters.slice(actualSavedCharactersCount)
-  //   gameStore.addCharacters(savedCharacters)
-  // }, [])
-
   const handleAddCharacter = () => {
     if (name) {
       gameStore.addCharacter(name);
