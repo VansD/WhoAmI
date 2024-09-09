@@ -4,6 +4,11 @@ import { observer } from 'mobx-react-lite';
 import { gameStore } from '../stores/GameStore';
 import { roundDurationsStore } from '../stores/RoundDurationStore';
 import { GameScreenProps } from '../navigation/NavTypes';
+import Sound from 'react-native-sound';
+import success from '../assets/sounds/success.mp3';
+import fail from '../assets/sounds/fail.mp3';
+
+let successSound: Sound, failSound: Sound;
 
 const GameScreen = observer(({ navigation }: GameScreenProps): React.JSX.Element => {
   const roundDuration = roundDurationsStore.getCurrentRoundDuration();
@@ -12,6 +17,24 @@ const GameScreen = observer(({ navigation }: GameScreenProps): React.JSX.Element
   const [pan, setPan] = useState(new Animated.ValueXY());
   const [currentCharacter, setCurrentCharacter] = useState<string | null>(null);
   const currentPair = gameStore.currentPair;
+  Sound.setCategory('Playback');
+  
+
+  useEffect(() => {
+    successSound = new Sound(success, Sound.MAIN_BUNDLE, (error) => {
+      if (error) {
+        console.log('Ошибка при загрузке success.mp3:', error);
+        return;
+      }
+      console.log('Sound loaded successfully');
+    });
+    failSound = new Sound(fail, Sound.MAIN_BUNDLE);
+
+    return () => {
+      successSound.release();
+      failSound.release();
+    };
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -36,6 +59,7 @@ const GameScreen = observer(({ navigation }: GameScreenProps): React.JSX.Element
   }, [currentPair]);
 
   const handleSwipeUp = () => {
+    successSound.play();
     if (currentPair) {
       gameStore.addPointToPair(currentPair);
     }
@@ -43,6 +67,7 @@ const GameScreen = observer(({ navigation }: GameScreenProps): React.JSX.Element
   };
 
   const handleSwipeDown = () => {
+    failSound.play();
     if (currentCharacter)
       gameStore.removeCharacter(currentCharacter);
     handleNextCharacter();

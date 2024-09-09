@@ -2,12 +2,10 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Debug Android",
-        "type": "reactnative",
-        "request": "launch",
-        "platform": "android",
-        "sourceMaps": true,
-        "cwd": "${workspaceFolder}"
+      "name": "Attach to Hermes application",
+      "request": "attach",
+      "type": "reactnativedirect",
+      "cwd": "${workspaceFolder}"
     }
   ]
 }

@@ -4,11 +4,11 @@ export const HeaderHome = (): React.JSX.Element =>
     <View style={styles.container}>
         <Image
             style={styles.headerImg}
-            source={require('../assets/logo.png')}
+            source={require('../assets/images/logo.png')}
         />
         <Image
             style={styles.headerText}
-            source={require('../assets/logoText.png')}
+            source={require('../assets/images/logoText.png')}
         /> 
     </View>
 

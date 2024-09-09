@@ -14,13 +14,11 @@ type PlayerScoreType = {
 
 class GameStore {
   players: string[] = playersStore.getPlayers();
-  previousPlayers: string[] = [];
   characters: string[] = [];
   previousCharacters: string[] = [];
   usedCharacters: string[] = [];
   scores: Record<string, PlayerScoreType> = {};
   currentPair: { explainer: string; guesser: string } | null = null;
-  //currentCharacters: string[] = [];
   currentRound = roundDurationsStore.currentRound;
   maxRounds = roundDurationsStore.maxRounds;
   roundDurations = roundDurationsStore.roundDurations;
@@ -33,17 +31,15 @@ class GameStore {
   addPlayer(name: string) {
     playersStore.addPlayer(name);
     this.players = playersStore.getPlayers();
-    this.previousPlayers = this.players.slice();
     this.scores[name] = { explainer: 0, guesser: 0 };
   }
 
-  // addPlayers(players: string[]) {
-  //   this.players = [...this.players, ...players];
-  //   players.forEach(name => {
-  //     this.scores[name] = { explainer: 0, guesser: 0 };
-  //   });
-  //   this.previousPlayers = this.players.slice();
-  // }
+  addPlayers(players: string[]) {
+    this.players = [...this.players, ...players];
+    players.forEach(name => {
+      this.scores[name] = { explainer: 0, guesser: 0 };
+    });
+  }
 
   addCharacter(name: string) {
     this.characters.push(name);
@@ -97,7 +93,6 @@ class GameStore {
   }
 
   resetGame() {
-    this.players = this.previousPlayers.slice();
     this.characters = [];
     this.usedCharacters = [];
     this.scores = {};
@@ -110,7 +105,6 @@ class GameStore {
   async restartGame() {
     await playersStore.restorePlayersForNewGame();
     this.players = playersStore.getPlayers();
-    this.previousPlayers = this.players.slice();
     this.scores = {};
     this.currentPair = null;
     roundDurationsStore.setCurrentRound(1);
@@ -121,7 +115,6 @@ class GameStore {
   }
 
   shuffleCharacters() {
-    //this.currentCharacters = [...this.characters];
     for (let i = this.characters.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [this.characters[i], this.characters[j]] = [this.characters[j], this.characters[i]];
@@ -142,17 +135,15 @@ class GameStore {
   }
 
   getResults(): Record<string, PlayerScoreType> {
-    return Object.fromEntries(
-      Object.entries(this.scores)
-        .sort(([nameA, scoresA], [nameB, scoresB]) => {
-          const totalScoreA = scoresA.explainer + scoresA.guesser;
-          const totalScoreB = scoresB.explainer + scoresB.guesser;
-          return totalScoreB - totalScoreA;
-        })
-    );
-  }
+    let res = Object.entries(this.scores)
+      .sort(([, scoresA], [, scoresB]) => {
+        const totalScoreA = scoresA.explainer + scoresA.guesser;
+        const totalScoreB = scoresB.explainer + scoresB.guesser;
+        return totalScoreB - totalScoreA;
+      });
 
-  
+    return Object.fromEntries(res);
+  }
 }
 
 export const gameStore = new GameStore();

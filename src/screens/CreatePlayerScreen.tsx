@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, FlatList, StyleSheet } from 'react-native';
 import { observer } from 'mobx-react-lite';
 import { gameStore } from '../stores/GameStore';
@@ -23,6 +23,10 @@ const CreatePlayersScreen = observer(({ navigation }: CreatePlayersScreenProps):
   const clearPlayers = () => {
     playersStore.clearPlayers();
   };
+
+  useEffect(() => {
+    gameStore.addPlayers(playersStore.players)
+  }, [])
 
   return (
     <View style={styles.container}>

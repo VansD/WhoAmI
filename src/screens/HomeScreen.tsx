@@ -7,7 +7,7 @@ import ExitButton from '../components/ExitButton';
 
 const HomeScreen = ({ navigation }: HomeScreenProps): React.JSX.Element => {
   const handleNewGame = () => {
-    gameStore.resetGame();
+    gameStore.restartGame();
     navigation.navigate('CreatePlayers');
   };
 

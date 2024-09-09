@@ -29,7 +29,7 @@ const AppNavigator = () => {
   return (
     <ImageBackground style={styles.imgBackground}
       resizeMode="stretch"
-      source={require('../assets/background_1.jpg')}>
+      source={require('../assets/images/background_1.jpg')}>
       <NavigationContainer theme={MyTheme}>
         <Stack.Navigator initialRouteName="Home">
           <Stack.Screen name="Home" component={HomeScreen} options={{ title: 'Угадай меня', headerTitleAlign: 'center', header: HeaderHome}} />

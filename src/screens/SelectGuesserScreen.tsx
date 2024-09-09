@@ -4,10 +4,12 @@ import { observer } from 'mobx-react-lite';
 import { gameStore } from '../stores/GameStore';
 import { SelectGuesserScreenProps } from '../navigation/NavTypes';
 import { Button } from '../components/Button';
+import { playersStore } from '../stores/PlayersStore';
 
 const SelectGuesserScreen: React.FC<SelectGuesserScreenProps> = ({ navigation }) => {
   const [selectedGuesser, setSelectedGuesser] = useState<string | null>(null);
   const [selectedExplainer, setSelectedExplainer] = useState<string | null>(null);
+  const players = playersStore.players;
 
   const handleSelectGuesser = (guesser: string) => {
     setSelectedGuesser(guesser);
@@ -30,7 +32,7 @@ const SelectGuesserScreen: React.FC<SelectGuesserScreenProps> = ({ navigation })
     <View style={styles.container}>
       <Text style={styles.textHead}>Загадывает:</Text>
       <FlatList
-        data={gameStore.players}
+        data={players}
         keyExtractor={(item) => item}
         renderItem={({ item }) => (
           <TouchableOpacity
@@ -46,7 +48,7 @@ const SelectGuesserScreen: React.FC<SelectGuesserScreenProps> = ({ navigation })
       />
       <Text style={styles.textHead}>Отгадывает:</Text>
       <FlatList
-        data={gameStore.players.filter(player => player !== selectedExplainer)}
+        data={players.filter(player => player !== selectedExplainer)}
         keyExtractor={(item) => item}
         renderItem={({ item }) => (
           <TouchableOpacity
