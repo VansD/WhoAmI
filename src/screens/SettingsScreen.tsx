@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Alert, KeyboardAvoidingView, Platform, StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SettingsScreenProps } from '../navigation/NavTypes';
 import { Button } from '../components/Button';
 import { roundDurationsStore } from '../stores/RoundDurationStore';
+import { STORAGE_KEYS } from '../stores/storageKeys';
+import { colors } from '../theme';
+
+const MIN_DURATION = 10;
 
 const SettingsScreen = ({ navigation }: SettingsScreenProps): React.JSX.Element => {
   const [roundDurations, setRoundDurations] = useState<number[]>([60, 60, 60]);
@@ -17,8 +21,12 @@ const SettingsScreen = ({ navigation }: SettingsScreenProps): React.JSX.Element 
   }, []);
 
   const handleSave = async () => {
+    if (roundDurations.some((duration) => duration < MIN_DURATION)) {
+      Alert.alert('Неверная длительность', `Минимальная длительность раунда — ${MIN_DURATION} секунд.`);
+      return;
+    }
     try {
-      await AsyncStorage.setItem('roundDurations', JSON.stringify(roundDurations));
+      await AsyncStorage.setItem(STORAGE_KEYS.roundDurations, JSON.stringify(roundDurations));
       navigation.goBack();
     } catch (error) {
       console.error('Ошибка сохранения настроек', error);
@@ -32,7 +40,9 @@ const SettingsScreen = ({ navigation }: SettingsScreenProps): React.JSX.Element 
   };
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <Text style={styles.label}>Длительность раундов (в секундах):</Text>
       {roundDurations.map((duration, index) => (
         <View key={index} style={styles.inputContainer}>
@@ -41,12 +51,13 @@ const SettingsScreen = ({ navigation }: SettingsScreenProps): React.JSX.Element 
             style={styles.input}
             keyboardType="numeric"
             value={duration.toString()}
-            onChangeText={(value) => updateRoundDuration(index, value ? parseInt(value) : 0)}
+            onChangeText={(value) => updateRoundDuration(index, value ? parseInt(value, 10) : 0)}
           />
         </View>
       ))}
+      <Text style={styles.hint}>Минимум {MIN_DURATION} секунд на раунд</Text>
       <Button title="Сохранить" onPress={handleSave} />
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -59,25 +70,30 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 25,
     marginBottom: 10,
-    color: 'black',
+    color: colors.text,
   },
   text: {
     fontSize: 20,
     marginBottom: 10,
-    color: 'black',
+    color: colors.text,
   },
   inputContainer: {
     marginBottom: 16,
   },
+  hint: {
+    fontSize: 16,
+    color: colors.inputBorder,
+    marginBottom: 10,
+  },
   input: {
     padding: 10,
     borderWidth: 1,
-    borderColor: '#587a69',
-    backgroundColor: '#e9f5f2',
+    borderColor: colors.inputBorder,
+    backgroundColor: colors.inputBackground,
     borderRadius: 5,
     marginBottom: 10,
     fontSize: 20,
-    color: 'black',
+    color: colors.text,
   },
 });
 
