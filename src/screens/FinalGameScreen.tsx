@@ -3,6 +3,7 @@ import { View, Text, FlatList, StyleSheet } from 'react-native';
 import { gameStore } from '../stores/GameStore';
 import { FinalGameScreenProps } from '../navigation/NavTypes';
 import { Button } from '../components/Button';
+import { colors, commonStyles } from '../theme';
 
 const FinalGameScreen: React.FC<FinalGameScreenProps> = ({ navigation }) => {
   const results = gameStore.getResults();
@@ -29,10 +30,8 @@ const FinalGameScreen: React.FC<FinalGameScreenProps> = ({ navigation }) => {
     navigation.navigate('Home');
   };
 
-  
-
   return (
-    <View style={styles.container}>
+    <View style={commonStyles.screen}>
       <FlatList
         data={Object.keys(results)}
         keyExtractor={(item) => item}
@@ -45,19 +44,13 @@ const FinalGameScreen: React.FC<FinalGameScreenProps> = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 16,
-  },
   header: {
     fontSize: 30,
   },
   text: {
     fontSize: 20,
     marginBottom: 5,
-    color: 'black',
+    color: colors.text,
   },
   name: {
     fontSize: 30,
@@ -71,7 +64,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   winner: {
-    backgroundColor: '#c9e1a4',
+    backgroundColor: colors.winner,
   },
   flatList: {
     width: '100%',

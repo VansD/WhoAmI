@@ -1,9 +1,10 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View } from 'react-native';
 import { gameStore } from '../stores/GameStore';
 import { HomeScreenProps } from '../navigation/NavTypes';
 import { Button } from '../components/Button';
 import ExitButton from '../components/ExitButton';
+import { commonStyles } from '../theme';
 
 const HomeScreen = ({ navigation }: HomeScreenProps): React.JSX.Element => {
   const handleNewGame = () => {
@@ -20,7 +21,7 @@ const HomeScreen = ({ navigation }: HomeScreenProps): React.JSX.Element => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={commonStyles.screen}>
       <Button title="Новая игра" onPress={handleNewGame} />
       <Button title="Настройки" onPress={handleSettings} />
       <Button title="Правила" onPress={handleRules} />
@@ -28,14 +29,5 @@ const HomeScreen = ({ navigation }: HomeScreenProps): React.JSX.Element => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 16,
-  },
-});
 
 export default HomeScreen;

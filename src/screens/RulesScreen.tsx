@@ -1,5 +1,6 @@
 import React from 'react';
 import { Text, StyleSheet, ScrollView } from 'react-native';
+import { colors } from '../theme';
 
 const RulesScreen = (): React.JSX.Element => {
   return (
@@ -30,13 +31,12 @@ const styles = StyleSheet.create({
   textHead: {
     fontSize: 25,
     marginBottom: 10,
-    color: "black",
-    
+    color: colors.text,
   },
   text: {
     fontSize: 20,
     marginBottom: 10,
-    color: "black",
+    color: colors.text,
   }
 });
 

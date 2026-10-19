@@ -5,7 +5,7 @@ import { gameStore } from '../stores/GameStore';
 import { RoundResultsScreenProps } from '../navigation/NavTypes';
 import { roundDurationsStore } from '../stores/RoundDurationStore';
 import { Button } from '../components/Button';
-import { Divider } from '../components/Divider';
+import { colors } from '../theme';
 
 const RoundResultsScreen = observer(({ navigation }: RoundResultsScreenProps) => {
     const results = gameStore.getResults();
@@ -38,9 +38,7 @@ const RoundResultsScreen = observer(({ navigation }: RoundResultsScreenProps) =>
                 onPress={() => {
                     gameStore.endRound();
                     navigation.navigate('SelectGuesser');
-
                 }}
-                style={styles.nextBtn}
             />
         </View>
     );
@@ -50,23 +48,18 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',
-        color: "black",
         marginHorizontal: 10
     },
     h1: {
         fontSize: 28,
         marginBottom: 20,
         marginTop: 20,
-        color: "black"
+        color: colors.text
     },
     h2: {
         fontSize: 20,
         marginBottom: 20,
-        color: "black"
-    },
-    result: {
-        fontSize: 18,
-        marginVertical: 5,
+        color: colors.text
     },
     flatList: {
         width: '100%',
@@ -74,24 +67,21 @@ const styles = StyleSheet.create({
     },
     text: {
         fontSize: 20,
-        color: "black"
+        color: colors.text
     },
     playerContainer: {
         flex: 1,
         alignItems: "center",
-        borderColor: "grey",
+        borderColor: colors.muted,
         borderWidth: 1,
         borderRadius: 10,
         marginBottom: 10,
-        backgroundColor: "white",
+        backgroundColor: colors.surface,
         padding: 10
     },
     playerTitle: {
         fontSize: 22,
-        color: "#009688"
-    },
-    nextBtn: {
-        
+        color: colors.primary
     }
 });
 

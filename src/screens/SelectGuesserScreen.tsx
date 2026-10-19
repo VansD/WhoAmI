@@ -5,6 +5,7 @@ import { gameStore } from '../stores/GameStore';
 import { SelectGuesserScreenProps } from '../navigation/NavTypes';
 import { Button } from '../components/Button';
 import { playersStore } from '../stores/PlayersStore';
+import { colors, commonStyles } from '../theme';
 
 const SelectGuesserScreen: React.FC<SelectGuesserScreenProps> = ({ navigation }) => {
   const [selectedGuesser, setSelectedGuesser] = useState<string | null>(null);
@@ -29,7 +30,7 @@ const SelectGuesserScreen: React.FC<SelectGuesserScreenProps> = ({ navigation })
   };
 
   return (
-    <View style={styles.container}>
+    <View style={commonStyles.screen}>
       <Text style={styles.textHead}>Загадывает:</Text>
       <FlatList
         data={players}
@@ -68,39 +69,33 @@ const SelectGuesserScreen: React.FC<SelectGuesserScreenProps> = ({ navigation })
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 16,
-  },
   textHead: {
     fontSize: 25,
     marginBottom: 10,
-    color: 'black',
+    color: colors.text,
     textAlign: 'center',
   },
   text: {
     fontSize: 20,
     marginBottom: 10,
-    color: 'black',
+    color: colors.text,
     textAlign: 'center',
   },
   playerButton: {
     padding: 10,
     marginVertical: 5,
-    backgroundColor: '#00ddaa',
+    backgroundColor: colors.primaryLight,
     borderRadius: 5,
     minWidth: '90%',
     marginHorizontal: 'auto',
   },
   selectedButton: {
-    backgroundColor: '#009688',
-    borderColor: "#000",
-    borderWidth: 2
+    backgroundColor: colors.primary,
+    borderColor: '#000',
+    borderWidth: 2,
   },
   selectedButtonText: {
-    color: 'white',
+    color: colors.surface,
   },
 });
 
