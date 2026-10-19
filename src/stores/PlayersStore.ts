@@ -1,9 +1,10 @@
 import { makeAutoObservable, runInAction } from 'mobx';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { STORAGE_KEYS } from './storageKeys';
 
 class PlayersStore {
   players: string[] = [];
-  storageKey = 'players';
+  storageKey = STORAGE_KEYS.players;
 
   constructor() {
     makeAutoObservable(this);
@@ -19,6 +20,11 @@ class PlayersStore {
 
   getPlayers() {
     return this.players;
+  }
+
+  removePlayer(name: string) {
+    this.players = this.players.filter((player) => player !== name);
+    this.savePlayers();
   }
 
   clearPlayers() {

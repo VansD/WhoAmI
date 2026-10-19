@@ -1,24 +1,25 @@
-import { makeAutoObservable, runInAction } from 'mobx';
+import { makeAutoObservable } from 'mobx';
 import { playersStore } from './PlayersStore';
 import { roundDurationsStore } from './RoundDurationStore';
 
 export type PlayerPairType = {
   explainer: string;
   guesser: string;
-}
+};
 
 type PlayerScoreType = {
   explainer: number;
   guesser: number;
 };
 
-class GameStore {
-  players: string[] = playersStore.getPlayers();
+const emptyScore = (): PlayerScoreType => ({ explainer: 0, guesser: 0 });
+
+export class GameStore {
   characters: string[] = [];
   previousCharacters: string[] = [];
   usedCharacters: string[] = [];
   scores: Record<string, PlayerScoreType> = {};
-  currentPair: { explainer: string; guesser: string } | null = null;
+  currentPair: PlayerPairType | null = null;
   currentRound = roundDurationsStore.currentRound;
   maxRounds = roundDurationsStore.maxRounds;
   roundDurations = roundDurationsStore.roundDurations;
@@ -26,19 +27,20 @@ class GameStore {
   constructor() {
     makeAutoObservable(this);
     roundDurationsStore.loadRoundDurations();
+    this.syncScores();
+  }
+
+  /**
+   * Список игроков — единый источник правды в playersStore.
+   * GameStore ничего не хранит и не дублирует, только читает.
+   */
+  get players(): string[] {
+    return playersStore.getPlayers();
   }
 
   addPlayer(name: string) {
     playersStore.addPlayer(name);
-    this.players = playersStore.getPlayers();
-    this.scores[name] = { explainer: 0, guesser: 0 };
-  }
-
-  addPlayers(players: string[]) {
-    this.players = [...this.players, ...players];
-    players.forEach(name => {
-      this.scores[name] = { explainer: 0, guesser: 0 };
-    });
+    this.ensureScore(name);
   }
 
   addCharacter(name: string) {
@@ -48,6 +50,16 @@ class GameStore {
 
   addCharacters(characters: string[]) {
     this.characters = [...this.characters, ...characters];
+    this.previousCharacters = this.characters.slice();
+  }
+
+  /**
+   * Удаление персонажа по индексу на этапе подготовки игры (исправление
+   * опечаток). В отличие от removeCharacter не переносит его в usedCharacters
+   * и корректно работает с одинаковыми именами.
+   */
+  removeCharacterAt(index: number) {
+    this.characters.splice(index, 1);
     this.previousCharacters = this.characters.slice();
   }
 
@@ -63,15 +75,8 @@ class GameStore {
     this.removeCharacter(this.characters[0]);
   }
 
-  setCurrentPair(pair: { explainer: string; guesser: string }) {
+  setCurrentPair(pair: PlayerPairType) {
     this.currentPair = pair;
-  }
-
-  moveCharacterToEnd() {
-    //const character = this.characters.shift();
-    // if (character) {
-    //   this.characters.push(character);
-    // }
   }
 
   removeCharacter(character: string) {
@@ -95,23 +100,18 @@ class GameStore {
   resetGame() {
     this.characters = [];
     this.usedCharacters = [];
-    this.scores = {};
-    this.players.forEach((player) => {
-      this.scores[player] = { explainer: 0, guesser: 0 };
-    });
+    this.resetScores();
     roundDurationsStore.setCurrentRound(1);
   }
 
   async restartGame() {
     await playersStore.restorePlayersForNewGame();
-    this.players = playersStore.getPlayers();
-    this.scores = {};
+    this.characters = [];
+    this.previousCharacters = [];
+    this.usedCharacters = [];
     this.currentPair = null;
+    this.resetScores();
     roundDurationsStore.setCurrentRound(1);
-
-    this.players.forEach((name) => {
-      this.scores[name] = { explainer: 0, guesser: 0 };
-    });
   }
 
   shuffleCharacters() {
@@ -135,14 +135,28 @@ class GameStore {
   }
 
   getResults(): Record<string, PlayerScoreType> {
-    let res = Object.entries(this.scores)
-      .sort(([, scoresA], [, scoresB]) => {
-        const totalScoreA = scoresA.explainer + scoresA.guesser;
-        const totalScoreB = scoresB.explainer + scoresB.guesser;
-        return totalScoreB - totalScoreA;
-      });
+    const sorted = Object.entries(this.scores).sort(
+      ([nameA], [nameB]) => this.getTotalScoreForPlayer(nameB) - this.getTotalScoreForPlayer(nameA),
+    );
 
-    return Object.fromEntries(res);
+    return Object.fromEntries(sorted);
+  }
+
+  private ensureScore(name: string) {
+    if (!this.scores[name]) {
+      this.scores[name] = emptyScore();
+    }
+  }
+
+  private syncScores() {
+    this.players.forEach((name) => this.ensureScore(name));
+  }
+
+  private resetScores() {
+    this.scores = {};
+    this.players.forEach((player) => {
+      this.scores[player] = emptyScore();
+    });
   }
 }
 
